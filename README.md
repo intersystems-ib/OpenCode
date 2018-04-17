@@ -37,9 +37,7 @@ We will have a new instance of _`SampleApps.Serialize.MapTesting`_ object, a clo
  
 ### What _`OPNLib.Serialize.Adaptor`_ provides?
 
-Basically 2 generic instance methods: `Export` and `Import`; and a generic mapping between each of the properties in the Caché object  and its equivalent serialized.
-
-Once the class that extends the Adaptor  is compiled, we'll have those methods available and a class mapping  storaged in 2 internal globals : ^MAPS and ^MAPSREV (**).
+Basically when we compile a class that inherits from our Adaptor, the class will have 4 new generic instance methods: `Export` and `Import` (that will act as dispatchers), and `exportStd` and  `importStd` (that implements the logic to serialize/deserialize in/from JSON format). Also, and very important, it will be created a generic mapping between each of the properties in the Caché object  and its equivalent serialized. That class mapping will be stored in 2 internal globals: `^MAPS` and `^MAPSREV` (**).
 (**) Globals structure explained later on 
  
 How is the mapping built at first place?
