@@ -16,8 +16,8 @@ To get the full features, you just have to import in your system 4 classes (1) :
 
 To enable this feature for a class, that class has to extend from _OPNLib.Serialize.Adaptor_. That'll be the only time that you'll have to touch your class for this feature. After that moment your class will be able to export/import JSON objects and it will accept future serialization mechanisms that you decide to implement without having to make more changes to class definition.
 
- ```
- ```
+---
+
 _**Example:**_ 
 _(Example assumes that your classname is `SampleApps.Serialize.MapTesting`, that is a persistent class and that you already extended it to inherit from `OPNLib.Serialize.Adaptor`)_
 
@@ -34,12 +34,12 @@ From the terminal,in the name space where your class exists :
      write newOBJ.%Id()
  ```
 We will have a new instance of _`SampleApps.Serialize.MapTesting`_ object, a clone of the one with ID=1. This was the example, we can modify it before saving or just discarding.
- ```
- ```
+
+---
  
 ### What _`OPNLib.Serialize.Adaptor`_ provides?
 
-Basically when we compile a class that inherits from our Adaptor, the class will have 4 new generic instance methods: `Export` and `Import` (that will act as dispatchers), and `exportStd` and  `importStd` (that implements the logic to serialize/deserialize in/from JSON format). Also, and very important, it will be created a generic mapping between each of the properties in the Caché object  and its equivalent serialized. That class mapping will be stored in 2 internal globals: `^MAPS` and `^MAPSREV` (Globals structure is explained in more detail in class documentation).
+Basically when we compile a class that inherits from our Adaptor, the class will have 4 new generic instance methods: `Export` and `Import` (that will act as dispatchers), and `exportStd` and  `importStd` (that implements the default logic to serialize/deserialize in/from JSON format). Also, and very important, it will be created a generic mapping between each of the properties in the Caché object  and its equivalent serialized. That class mapping will be stored in 2 internal globals: `^MAPS` and `^MAPSREV` (Globals structure is explained in more detail in class documentation).
  
 ### How is the mapping built at first place?
 
@@ -49,23 +49,29 @@ By default,  all classes that inherit from `OPNLib.Serialize.Adaptor` will have 
 
 Each property will be categorized in group types, numbered from 1 to 6. Currently these are the group types supported :
 
-	1. Basic type 
-		* It'll include %String, %Integer, %Date, %Datetime,%Timestamp,%Decimal,%Float,… and most of the basic types defined in the %Library package 
-	2. List collection 
-		* It'll include collections of datatypes of type %Collection.ListOfDT
-	3. Array collection 
-		* It'll include collections of datatypes of type %Collection.ArrayOfDT
-	4. Object Reference
-		* A property that reference a custom object not in %* libraries 
-	5. Array of objects and Relationship objects 
-		* A property of type %Collection.ArrayOfObject or a property of type %RelationshipObject with cardinality many or children
-	6. List of Objects 
-		* A property of type %Collection.ListOfObject
-	7. Stream
-		* Properties of type %Stream.*, %CSP.*stream*,…
+Code | Category | Description
+---- | ------------- | -----------
+1 | Basic type | It'll include %String, %Integer, %Date, %Datetime,%Timestamp,%Decimal,%Float,… and most of the basic types defined in the %Library package 
+2 | List collection | It'll include collections of datatypes of type %Collection.ListOfDT
+3 | Array collection | It'll include collections of datatypes of type %Collection.ArrayOfDT
+4 | Object Reference | A property that reference a custom object not in %* libraries 
+5 | Array of objects and Relationship objects | A property of type %Collection.ArrayOfObject or a property of type %RelationshipObject with cardinality many or children
+6 | List of Objects | A property of type %Collection.ListOfObject
+7 | Stream | Properties of type %Stream.*, %CSP.*stream*,…
 
-During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as base64 text)
- 
+During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as a stream in base64).
+
+---
+**MAP0 structure**
+
+MAP0("*classname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
+ *List Element*:
+ > Pos 1 *Target Property Name*
+ > Pos 2
+ > Pos 3
+ > Pos 4
+
+---
 
 ### How could we configure our mapping for serialization?
 
