@@ -24,6 +24,7 @@ _(Example assumes that your classname is `SampleApps.Serialize.MapTesting`, that
 From the terminal,in the name space where your class exists :
 
 ```javascript
+
      Set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
      Set objJSON = obj.Export()
      Do objJSON.%ToJSON()
@@ -65,11 +66,12 @@ During map generation, by default, the Adaptor sets export and Import conversion
 **MAP0 structure**
 
 MAP0("*classname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
+
  *List Element*:
- > Pos 1 *Target Property Name*
- > Pos 2
- > Pos 3
- > Pos 4
+ > [1] *Target Property Name*
+ > [2] 
+ > [3]
+ > [4]
 
 ---
 
