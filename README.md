@@ -68,33 +68,61 @@ During map generation, by default, the Adaptor sets export and Import conversion
 MAP0("*classname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
 
  *List Element*:
- > [1] *Target Property Name*
- > [2] 
- > [3]
- > [4]
+ 
+  [1] *Target Property Name*
+  
+  [2] *Convert Method*
+  
+  [3] *Drill down*
+  
+  [4] *Class of referenced object(s)*
+  
+  [5] *Template Class that implement export/import logic*
+  
+  [6] *Method Class to dispatch for export/import*
 
 ---
 
 ### How could we configure our mapping for serialization?
 
-We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply (***) 
-(***) See OPNLIB.SERIALIZE.ADAPTOR.Serialize.Util library for tools to export/import maps, get / set property mappings,etc…)
+We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply (See `OPNLib.Serialize.Util` class for tools to export/import maps, get / set property mappings,etc…).
 
-We also have the possibility of changing a bit the way in which default map MAP0 is generated :
-	• Change the name of default map. 
-		○ Use parameter EXPTDEFAULTMAP to indicate a name for default map before compiling the class 
-	• Excluding  properties 
-		○ if we don't want to export some   properties, we should include them in the parameter : EXPTEXCLUDEPROP before compiling the class (the properties will be in a comma separated list)
-	• include  object references
-		○ Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter EXPTINCLUDEOREF to 1.
-	• Drill down levels
-		○ To indicate up to what number of levels we want the export mechanism to drill down through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
+---
+**Example:**
 
-Example:
+```
+	set tClassName = "SampleApps.Serialize.MapTesting"
+	;Assuming the class has only 1 map: MAP0, used in ^MAPS and ^MAPSREV
+ 	set json = ##class(OPNLib.Serialize.Util).ExportMapsToJSON(tClassName)
+	set json.maps.%Get(0).map = "MAP1"  //change name of MAP0 to MAP1 in map for exports (stored in ^MAPS)
+	set json.maps.%Get(1).map = "MAP1" //change name of MAP0 to MAP1 in map for imports (stored in ^MAPSREV)
+	
+	;Overwrite map (2) of SampleApps.Serialize.MapTesting with map in object:json
+	set tSC = ##class(OPNLib.Serialize.Util).ImportMapsFromJSON(json,2,tClassName) 
+	
+	;Get setting of one of the properties. They're returned in a json object {"from":"propname","settings":<list>}
+	set propExprt = ##class(SampleApps.Serialize.MapTesting).GetMappedPropSettings("code","MAP1",tClassName,1)
 
-<<<create MAP1 from MAP0 >>>
+	;We'll change the property name that will keep the value of code property in MapTesting object
+	set $ListUpdate(propExprt.settings,1) = "codeAccepted"
+	do ##class(SampleApps.Serialize.MapTesting).SetMappedPropSettings("code",propExprt,"MAP1",tClassName,1)
+	
+	
+```
 
-<<<USING MAP0 and MAP1 from the same object instance >>>
+
+
+We also have the possibility of changing a bit the way in which default map `MAP0` is generated :
+* Change the name of default map. 
+ * Use parameter `EXPTDEFAULTMAP` to indicate a name for default map before compiling the class 
+* Excluding  properties 
+ * if we don't want to export some   properties, we should include them (comma separated list) in the parameter : `EXPTEXCLUDEPROP` before compiling the class
+* include  object references
+ * Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter `EXPTINCLUDEOREF` to 1.
+* Drill down levels
+ * Use `EXPTDRILLDOWN`To indicate up to what number of levels that the export/import logic should follow through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
+
+
 
 How did it work the default mechanism?
 
