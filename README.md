@@ -63,9 +63,9 @@ Code | Category | Description
 During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as a stream in base64).
 
 ---
-**MAP0 structure**
+** MAPS / MAPSREV globals' structure**
 
-MAP0("*classname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
+^MAP("*classname*","*mapname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
 
  *List Element*:
  
@@ -90,24 +90,30 @@ We can have as much mapping definitions for a class as we need. An easy way to s
 ---
 **Example:**
 
-```
-	set tClassName = "SampleApps.Serialize.MapTesting"
-	;Assuming the class has only 1 map: MAP0, used in ^MAPS and ^MAPSREV
- 	set json = ##class(OPNLib.Serialize.Util).ExportMapsToJSON(tClassName)
-	set json.maps.%Get(0).map = "MAP1"  //change name of MAP0 to MAP1 in map for exports (stored in ^MAPS)
-	set json.maps.%Get(1).map = "MAP1" //change name of MAP0 to MAP1 in map for imports (stored in ^MAPSREV)
-	
-	;Overwrite map (2) of SampleApps.Serialize.MapTesting with map in object:json
-	set tSC = ##class(OPNLib.Serialize.Util).ImportMapsFromJSON(json,2,tClassName) 
-	
-	;Get setting of one of the properties. They're returned in a json object {"from":"propname","settings":<list>}
-	set propExprt = ##class(SampleApps.Serialize.MapTesting).GetMappedPropSettings("code","MAP1",tClassName,1)
+```javascript
+ set tClassName = "SampleApps.Serialize.MapTesting"
+ ;Assuming the class has only 1 map: MAP0, used in ^MAPS and ^MAPSREV
+ set json = ##class(OPNLib.Serialize.Util).ExportMapsToJSON(tClassName)
+ 
+ ;change name of map from MAP0 to MAP1 
+ set json.maps.%Get(0).map = "MAP1"  //change mapname entry in corresponding to ^MAPS
+ set json.maps.%Get(1).map = "MAP1" //change mapname entry corresponding to ^MAPSREV
 
-	;We'll change the property name that will keep the value of code property in MapTesting object
-	set $ListUpdate(propExprt.settings,1) = "codeAccepted"
-	do ##class(SampleApps.Serialize.MapTesting).SetMappedPropSettings("code",propExprt,"MAP1",tClassName,1)
-	
-	
+ ;Overwrite map (2) of SampleApps.Serialize.MapTesting with map in object:json
+ set tSC = ##class(OPNLib.Serialize.Util).ImportMapsFromJSON(json,2,tClassName) 
+
+ ;Get settings of one of the properties. They're returned in a json object
+ set propExprt = ##class(SampleApps.Serialize.MapTesting).GetMappedPropSettings("code","MAP1",tClassName,1)
+
+ ;We'll change the targetPropertyName setting
+ set $ListUpdate(propExprt.settings,1) = "codeAccepted"
+ do ##class(SampleApps.Serialize.MapTesting).SetMappedPropSettings("code",propExprt,"MAP1",tClassName,1)
+
+ ;Now we open and object and export it using new mapping
+ set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
+ set objJSON = obj.Export(,,,,"MAP1")
+ do objJSON.%ToJSON()
+
 ```
 
 
