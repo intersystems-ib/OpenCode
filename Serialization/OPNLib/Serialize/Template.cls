@@ -70,7 +70,7 @@ ClassMethod Export(pObject as %RegisteredObject, pInObject As %RegisteredObject 
 		do %code.WriteLine("   	 do tArr.%Push(tKeyValue)")	
 		do %code.WriteLine(" 	 set tValue = "_$case(tConvert,"":"pObject."_tIdx_".GetNext(.tKey)",:".."_tConvert_"(pObject."_tIdx_".GetNext(.tKey))"))
 		do %code.WriteLine("   }")
-		do %code.WriteLine("   do tObj."_TargetProp_" = tArr")
+		do %code.WriteLine("   set tObj."_tTargetProp_" = tArr")
 		set tIdx = $order(^MAPS(tClassTarget,tMapName,tGroup,tIdx))
     }
 	do %code.WriteLine("   ")
@@ -90,16 +90,25 @@ ClassMethod Export(pObject as %RegisteredObject, pInObject As %RegisteredObject 
 		do %code.WriteLine("     {")
 		do %code.WriteLine("       set tDrillDown = "_tPropMAPDrillDown)
 		do %code.WriteLine("     }")
-		do %code.WriteLine("     set tJSONRef="""" ")
-		do %code.WriteLine("     if tDrillDown > 0 ")
-		do %code.WriteLine("     {")
-		do %code.WriteLine("       set tJSONRef = pObject."_tIdx_".Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
-		do %code.WriteLine("     }")
-		do %code.WriteLine("     //elseif // here in default JSON we have an option to export OREFs...") 
-		do %code.WriteLine("     //{")
-		do %code.WriteLine("     //  set tJSONRef={""objref"":("" ""_$property(pObject,tIdx))}")
-		do %code.WriteLine("     //}")
-		do %code.WriteLine("     set tObj."_tTargetProp_" = tJSONRef")
+		if (tClassRef '= "")
+		{
+			do %code.WriteLine("     set tJSONRef="""" ")
+			do %code.WriteLine("     if (tDrillDown > 0)&&(##class(%Dictionary.CompiledClass).%OpenId("""_tClassRef_""").Super[""OPNLib.Serialize.Adaptor"")")
+			do %code.WriteLine("     {")
+			do %code.WriteLine("       set tJSONRef = pObject."_tIdx_".Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
+			do %code.WriteLine("     }")
+			do %code.WriteLine("     //elseif // here in default JSON we have an option to export OREFs...") 
+			do %code.WriteLine("     //{")
+			do %code.WriteLine("     //  set tJSONRef={""objref"":("" ""_$property(pObject,tIdx))}")
+			do %code.WriteLine("     //}")
+			do %code.WriteLine("     set tObj."_tTargetProp_" = tJSONRef")
+		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")
+		
+		}
+		
 		do %code.WriteLine("   }")
 		set tIdx = $order(^MAPS(tClassTarget,tMapName,tGroup,tIdx))
     }
@@ -125,15 +134,23 @@ ClassMethod Export(pObject as %RegisteredObject, pInObject As %RegisteredObject 
 		do %code.WriteLine("     while (tKey'="""")")
 		do %code.WriteLine("     {   ")
 		do %code.WriteLine("       set tJSONRef = """" ")
-		do %code.WriteLine("       if tDrillDown > 0")
-		do %code.WriteLine("       {")
-		do %code.WriteLine("         set tJSONRef = tObjChildMany.Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
-		do %code.WriteLine("       }")
+		if (tClassRef '= "")
+		{
+			do %code.WriteLine("       if (tDrillDown > 0)&&(##class(%Dictionary.CompiledClass).%OpenId("""_tClassRef_""").Super[""OPNLib.Serialize.Adaptor"")")
+			do %code.WriteLine("       {")
+			do %code.WriteLine("         set tJSONRef = tObjChildMany.Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
+			do %code.WriteLine("       }")
+		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")
+		
+		}
 		do %code.WriteLine("       set tArrElem = {""key"":(tKey),""value"":(tJSONRef)}")
 		do %code.WriteLine("       do tArr.%Push(tArrElem)")	
 		do %code.WriteLine("       set tObjChildMany = pObject."_tIdx_".GetNext(.tKey)")
 		do %code.WriteLine("     }")
-		do %code.WriteLine("     set tObj."_tTargetProp_" = tArr)")							
+		do %code.WriteLine("     set tObj."_tTargetProp_" = tArr")							
 		do %code.WriteLine("   }")
 		set tIdx = $order(^MAPS(tClassTarget,tMapName,tGroup,tIdx))
     }
@@ -152,21 +169,28 @@ ClassMethod Export(pObject as %RegisteredObject, pInObject As %RegisteredObject 
 		do %code.WriteLine("     set tDrillDown = pDrillDown")
 		do %code.WriteLine("     if (pDrillDown < 0)||("_(tPropMAPDrillDown'>0)_")") 
 		do %code.WriteLine("     {")
-		do %code.WriteLine("       set tDrillDown = tPropMAPDrillDown")
+		do %code.WriteLine("       set tDrillDown = "_tPropMAPDrillDown)
 		do %code.WriteLine("     }")
 		do %code.WriteLine("     set tArr = []")
 		do %code.WriteLine("     set tObjChildMany = pObject."_tIdx_".GetNext(.tKey)")
 		do %code.WriteLine("     while (tKey'="""")")
 		do %code.WriteLine("     {   ")
 		do %code.WriteLine("       set tJSONRef = """" ")
-		do %code.WriteLine("       if tDrillDown > 0")
-		do %code.WriteLine("       {")
-		do %code.WriteLine("         set tJSONRef = tObjChildMany.Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
-		do %code.WriteLine("       }")
+		if (tClassRef '= "")
+		{
+			do %code.WriteLine("       if (tDrillDown > 0)&&(##class(%Dictionary.CompiledClass).%OpenId("""_tClassRef_""").Super[""OPNLib.Serialize.Adaptor"")")
+			do %code.WriteLine("       {")
+			do %code.WriteLine("         set tJSONRef = tObjChildMany.Export("""_tMAPClass_""","""_tMAP_""",,,(tDrillDown-1))")
+			do %code.WriteLine("       }")
+		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")		
+		}
 		do %code.WriteLine("       do tArr.%Push(tJSONRef)")	
 		do %code.WriteLine("       set tObjChildMany = pObject."_tIdx_".GetNext(.tKey)")
 		do %code.WriteLine("     }")
-		do %code.WriteLine("     set tObj."_tTargetProp_" = tArr)")							
+		do %code.WriteLine("     set tObj."_tTargetProp_" = tArr")							
 		do %code.WriteLine("   }")
 		set tIdx = $order(^MAPS(tClassTarget,tMapName,tGroup,tIdx))
     }
@@ -195,7 +219,7 @@ ClassMethod Export(pObject as %RegisteredObject, pInObject As %RegisteredObject 
 			do %code.WriteLine("     }")
 			do %code.WriteLine("     set tContent = $system.Encryption.Base64Encode(tContent)")
 		} 
-		do %code.WriteLine("     set tObj."_tTargetProp_" = tContent)")
+		do %code.WriteLine("     set tObj."_tTargetProp_" = tContent")
 		do %code.WriteLine("   }")
 		set tIdx = $order(^MAPS(tClassTarget,tMapName,tGroup,tIdx))
     }
@@ -242,7 +266,7 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 	do %code.WriteLine("   {")
 	do %code.WriteLine("      set pInObject = {}.%FromJSON(pInObject)")
 	do %code.WriteLine("   }")
-	do %code.WriteLine("   elseif pInObject'=""%Library.DynamicObject""")
+	do %code.WriteLine("   elseif pInObject.%ClassName(1)'=""%Library.DynamicObject""")
 	do %code.WriteLine("   {")
 	do %code.WriteLine("      return $$$ERROR(5001,""Valid input data should be a %Stream.* or a %DynamicObject (JSON)"")")
 	do %code.WriteLine("   }")
@@ -304,15 +328,23 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 		do %code.WriteLine("   {")
 		do %code.WriteLine("     set tDrillDown = "_tPropMAPDrillDown)
 		do %code.WriteLine("   }")	
-		do %code.WriteLine("   //Only if there is a json object we'll try to import")
-		do %code.WriteLine("   //By default we'll assume that referenced object it'll be a new one. ")
-		do %code.WriteLine("   //This could be improved to allow import references to existing objects")
-		do %code.WriteLine("   if (tDrillDown > 0)&&(pInObject.%GetTypeOf("""_tIdx_""") = ""object"")") 
-		do %code.WriteLine("   {")
-		do %code.WriteLine("      set tRefObject = $classmethod("""_tClassRef_""",""%New"")")
-		do %code.WriteLine("      do tRefObject.Import("""_tMAPClass_""","""_tMAP_""",pInObject."_tIdx_",(tDrillDown-1))")
-		do %code.WriteLine("      set pObject."_tTargetProp_" = tRefObject")
-		do %code.WriteLine("   }")
+		if (tClassRef'="")
+		{
+			do %code.WriteLine("   //Only if there is a json object we'll try to import")
+			do %code.WriteLine("   //By default we'll assume that referenced object it'll be a new one. ")
+			do %code.WriteLine("   //This could be improved to allow import references to existing objects")
+			do %code.WriteLine("   if (tDrillDown > 0)&&(pInObject.%GetTypeOf("""_tIdx_""") = ""object"")&&(##class(%Dictionary.CompiledClass).%OpenId("""_tClassRef_""").Super[""OPNLib.Serialize.Adaptor"")") 
+			do %code.WriteLine("   {")
+			do %code.WriteLine("      set tRefObject = $classmethod("""_tClassRef_""",""%New"")")
+			do %code.WriteLine("      do tRefObject.Import("""_tMAPClass_""","""_tMAP_""",pInObject."_tIdx_",(tDrillDown-1))")
+			do %code.WriteLine("      set pObject."_tTargetProp_" = tRefObject")
+			do %code.WriteLine("   }")
+		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")
+		
+		}
 		set tIdx = $order(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
     }
 	do %code.WriteLine(" ")
@@ -325,7 +357,6 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 		set $ListBuild(tTargetProp,tConvert,tPropMAPDrillDown,tClassRef,tMAPClass,tMAP)=$Get(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
 		do %code.WriteLine("   //If drilldown of this property it's not prohibited by MAP (=0), then we'll apply")
 		do %code.WriteLine("   //the level by default or the level of deep requested in the method call")
-		do %code.WriteLine("   set tPropMAPDrillDown = $ListGet(^MAPSREV("""_%compiledclass.Name_""",tMapName,"_tGroup_",tIdx),3)")
 		do %code.WriteLine("   set tDrillDown = pDrillDown")
 		do %code.WriteLine("   if (pDrillDown < 0)||("_(tPropMAPDrillDown'>0)_")") 
 		do %code.WriteLine("   {")
@@ -334,20 +365,28 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 		do %code.WriteLine("   //Only if there is a json object we'll try to import")
 		do %code.WriteLine("   //By default we'll assume that referenced object it'll be a new one. ")
 		do %code.WriteLine("   //ROOM to improve - This perhaps could be improved to allow import references to existing objects")
-		do %code.WriteLine("   if (tClassRef'="""")&&(tDrillDown > 0)&&(pInObject.%GetTypeOf("""_tIdx_""") = ""array"")") 
-		do %code.WriteLine("   {")
-		do %code.WriteLine("     set tIterator = pInObject."_tIdx_".%GetIterator()")
-		do %code.WriteLine("     while tIterator.%GetNext(.tKey,.tValue)")
-		do %code.WriteLine("     {")
-		do %code.WriteLine("       //Each array element will be of type {""key"":<key>,""value"":<JSON object>")	
-		do %code.WriteLine("       set tElemObj = $classmethod("""_tClassRef_""",""%New"")")
-		do %code.WriteLine("       do tElemObj.Import("""_tMAPClass_""","""_tMAP_""",tValue.value,(tDrillDown-1))")
-		do %code.WriteLine("       if $IsObject(tElemObj)")
-		do %code.WriteLine("       {")
-		do %code.WriteLine("         set tSC = pObject."_tTargetProp_".SetAt(tElemObj,tValue.key)")
-		do %code.WriteLine("       }")
-		do %code.WriteLine("     }")
-		do %code.WriteLine("   }")
+		if (tClassRef'="")
+		{		
+			do %code.WriteLine("   if (tDrillDown > 0)&&(pInObject.%GetTypeOf("""_tIdx_""") = ""array"")") 
+			do %code.WriteLine("   {")
+			do %code.WriteLine("     set tIterator = pInObject."_tIdx_".%GetIterator()")
+			do %code.WriteLine("     while tIterator.%GetNext(.tKey,.tValue)")
+			do %code.WriteLine("     {")
+			do %code.WriteLine("       //Each array element will be of type {""key"":<key>,""value"":<JSON object>")	
+			do %code.WriteLine("       set tElemObj = $classmethod("""_tClassRef_""",""%New"")")
+			do %code.WriteLine("       do tElemObj.Import("""_tMAPClass_""","""_tMAP_""",tValue.value,(tDrillDown-1))")
+			do %code.WriteLine("       if $IsObject(tElemObj)")
+			do %code.WriteLine("       {")
+			do %code.WriteLine("         set tSC = pObject."_tTargetProp_".SetAt(tElemObj,tValue.key)")
+			do %code.WriteLine("       }")
+			do %code.WriteLine("     }")
+			do %code.WriteLine("   }")
+		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")
+		
+		}
 		set tIdx = $order(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
     }
 	do %code.WriteLine(" ")
@@ -385,6 +424,11 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 			do %code.WriteLine("     }")
 			do %code.WriteLine("   }")
 		}
+		else
+		{
+			do %code.WriteLine("   //Classname of Referenced Object was not indicated in MAP - No auto-generated import code included")
+		
+		}
 		set tIdx = $order(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
     }
 	do %code.WriteLine(" ")
@@ -395,8 +439,6 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 	while (tIdx'="")
 	{
 		set $ListBuild(tTargetProp,tConvert,tPropMAPDrillDown,tClassRef,tMAPClass,tMAP)=$Get(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
-		do %code.WriteLine("   set:tConvert="""" tConvert=""importBase64Stream""")
-		do %code.WriteLine("   set tValue = $case(tConvert,"""":pInObject.%Get(tIdx),:$method(pObject,tConvert,pInObject.%Get(tIdx)))")
 		if tConvert'=""
 		{
 			do %code.WriteLine("   set tValue = .."_tConvert_"(pInObject."_tIdx_")")
@@ -408,7 +450,7 @@ ClassMethod Import(ByRef pObject as %RegisteredObject,pInObject as %RegisteredOb
 			do %code.WriteLine("   do tValue.Write(tContent)")
 		}
 	
-		do %code.WriteLine("   set tSC = pObject."_tTargeProp_".CopyFrom(tValue)")	
+		do %code.WriteLine("   set tSC = pObject."_tTargetProp_".CopyFrom(tValue)")	
 		set tIdx = $order(^MAPSREV(tClassTarget,tMapName,tGroup,tIdx))
     }
 	do %code.WriteLine(" ")
