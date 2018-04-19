@@ -8,13 +8,13 @@ This project is just an attempt to implement a feature to serialize objects (per
 
 ### How to get universal serialization feature in your classes
 
-To get the full features, you just have to import in your system 4 classes (1) : _OPNLib.Serialize.Adaptor, OPNLib.Serialize.Util and OPNLib.Serialize.TemplateOPNLib.Serialize.TemplateCSV_.
+To get the full features, you just have to import in your system 4 classes (1) : `OPNLib.Serialize.Adaptor`, `OPNLib.Serialize.Util`, `OPNLib.Serialize.TemplateOPNLib.Serialize.Template` and `OPNLib.Serialize.TemplateOPNLib.Serialize.TemplateCSV` (this last one it's not yet finished in Release 1/2018-04).
 
-(1) Actually you would just need _OPNLib.Serialize.Adaptor_ if you just need JSON serialization
+(1) Actually you would just need `OPNLib.Serialize.Adaptor` if you just need JSON serialization
 
 ### Start Serializing
 
-To enable this feature for a class, that class has to extend from _OPNLib.Serialize.Adaptor_. That'll be the only time that you'll have to touch your class for this feature. After that moment your class will be able to export/import JSON objects and it will accept future serialization mechanisms that you decide to implement without having to make more changes to class definition.
+To enable this feature for a class, that class has to extend from `OPNLib.Serialize.Adaptor`. That'll be the only time that you'll have to touch your class for this feature. After that moment your class will be able to export/import JSON objects and it will accept future serialization mechanisms that you decide to implement without having to make more changes to class definition.
 
 ---
 
@@ -81,6 +81,20 @@ During map generation, by default, the `Adaptor` sets export and import conversi
   [6] *Method Class to dispatch for export/import*
 
 ---
+
+This is an example of two nodes in global `^MAPS` and their counterpart in `^MAPSREV`:
+```
+...
+...
+^MAPS("SampleApps.Serialize.MapTesting","MAP0",4,"reference")=$lb("referencia","","1","SampleApps.Serialize.MapTesting","","")
+^MAPS("SampleApps.Serialize.MapTesting","MAP0",5,"arrayOfObjects")=$lb("arrayDeObjectos","","1","SampleApps.Serialize.MapTesting","","")
+...
+...
+^MAPSREV("SampleApps.Serialize.MapTesting","MAP0",4,"referencia")=$lb("reference","","1","SampleApps.Serialize.MapTesting","","")
+^MAPSREV("SampleApps.Serialize.MapTesting","MAP0",5,"arrayDeObjetos")=$lb("arrayOfObjects","","1","SampleApps.Serialize.MapTesting","","")
+...
+...
+```
 
 ### How could we configure our mapping for serialization?
 
