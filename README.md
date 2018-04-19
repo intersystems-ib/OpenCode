@@ -118,13 +118,13 @@ We can have as much mapping definitions for a class as we need. An easy way to s
 
 We also have the possibility of changing a bit the way in which default map `MAP0` is generated :
 * Change the name of default map. 
- * Use parameter `EXPTDEFAULTMAP` to indicate a name for default map before compiling the class 
+  * Use parameter `EXPTDEFAULTMAP` to indicate a name for default map before compiling the class 
 * Excluding  properties 
- * if we don't want to export some   properties, we should include them (comma separated list) in the parameter : `EXPTEXCLUDEPROP` before compiling the class
-* include  object references
- * Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter `EXPTINCLUDEOREF` to 1.
+  * if we don't want to export some   properties, we should include them (comma separated list) in the parameter : `EXPTEXCLUDEPROP` before compiling the class
+* Include  object references
+  * Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter `EXPTINCLUDEOREF` to 1.
 * Drill down levels
- * Use `EXPTDRILLDOWN`To indicate up to what number of levels that the export/import logic should follow through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
+  * Use `EXPTDRILLDOWN`To indicate up to what number of levels that the export/import logic should follow through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
 
 ## How did it work the default mechanism?
 
