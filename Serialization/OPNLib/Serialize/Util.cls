@@ -335,6 +335,75 @@ ClassMethod GetMappedPropSettings(pProp as %String,pMap as %String,pClassName as
 
 }
 
+///WORKING ON IT
+ClassMethod ChangeTargetProp(pProp as %String,pNewName as %String,pMap as %String,pClassName as %String) as %Status
+{
+	quit 0
+	
+	
+	#dim tSettings as %String=""
+	#dim tGroupAssigned as %Integer=-1
+	#dim tCnt as %Integer=0   //it will keep name of appearances of property
+	#dim tSC as %Status = $$$OK
+	
+	set tGlobal = $case(pExport,0:"^MAPSREV",:"^MAPS")
+	
+	quit:(pClassName="")||(pNewName="")||(pProp="")||(pMap="") $$$ERROR(5001,"Invalid params. Please check. PropName = "_$get(pProp,"")_" New Name = "_$get(pNewName,"")_" ClassName = "_$get(pClassName,"")_" MAP = "_$get(pMap,""))
+	
+	set tGrp=$order(@tGlobal@(pClassName,pMap,""))
+	
+	
+}
+
+/// WORKING ON IT
+ClassMethod RenameSourceProp(pProp as %String,pNewName as %String,pMap as %String,pClassName as %String, pExport as %Boolean=1) as %Status
+{
+	quit 0
+	
+	
+	#dim tSettings as %String=""
+	#dim tGroupAssigned as %Integer=-1
+	#dim tCnt as %Integer=0   //it will keep name of appearances of property
+	#dim tSC as %Status = $$$OK
+	
+	set tGlobal = $case(pExport,0:"^MAPSREV",:"^MAPS")
+	
+	quit:(pClassName="")||(pNewName="")||(pProp="")||(pMap="") $$$ERROR(5001,"Invalid params. Please check. PropName = "_$get(pProp,"")_" New Name = "_$get(pNewName,"")_" ClassName = "_$get(pClassName,"")_" MAP = "_$get(pMap,""))
+	
+	set tGrp=$order(@tGlobal@(pClassName,pMap,""))
+	
+	while tGrp'=""
+	{
+		set tIdx=$order(@tGlobal@(pClassName,pMap,tGrp,""))
+		while tIdx'=""
+		{
+			if tIdx=pNewName
+			{
+				set tCnt = tCnt+1
+				quit
+			}
+			if tIdx=pProp 
+			{
+				set tGrpAssigned = tGrp
+			}
+			set tIdx=$order(@tGlobal@(pClassName,pMap,tGrp,tIdx))
+		}
+		set tGrp=$order(@tGlobal@(pClassName,pMap,tGrp))
+	}
+	
+	if (tCnt=0)&&(tGrpAssigned'<0)  //pProp exists and there is no other property with name = to pNewName
+	{
+		merge @tGlobal@(pClassName,pMap,tGrpAssigned,pNewName) = @tGlobal@(pClassName,pMap,tGrpAssigned,pProp)
+		kill @tGlobal@(pClassName,pMap,tGrpAssigned,pProp)
+	}
+	else // error
+	{
+		set tSC = $$$ERROR(5001,"0 - Check if property doesn't exist in class/map indicated or if new property name is already in use")
+	}
+	
+	return tSC
+	
+}
 /// Set the settings (specified a comma separated list) for the property in the MAP specified
 /// pSettings: comma separated list ("<propNameTarget>,<methodName>,<drillDownFlag>,<classInnerObjects>,<templatesClass>,<methodClass>"
 /// pMap: map in which the property has to be set (if null, default map is chosen) 

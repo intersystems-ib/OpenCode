@@ -104,7 +104,7 @@ ClassMethod TestExportImportMAP(pClassName as %String="SamplesApp.Serialize.MapT
 
 ClassMethod TestSettings(pClassName as %String="SamplesApp.Serialize.MapTesting")
 {
-	set j = ##class(JTS.MapTesting).GetMappedPropSettings("code","MAP0",pClassName,1)
+	set j = ##class(SampleApps.Serialize.MapTesting).GetMappedPropSettings("code","MAP0",pClassName,1)
 	quit
 }
 
