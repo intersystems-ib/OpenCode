@@ -24,7 +24,6 @@ _(Example assumes that your classname is `SampleApps.Serialize.MapTesting`, that
 From the terminal,in the name space where your class exists :
 
 ```javascript
-
      Set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
      Set objJSON = obj.Export()
      Do objJSON.%ToJSON()
@@ -46,9 +45,9 @@ Basically when we compile a class that inherits from our Adaptor, the class will
 
 We can have several maps for a particular class (for example to exchange data from an object  with different systems or organizations, we might need to export or import some properties but not others, or apply different conversions to some values, or name the properties differently , etc…).
 
-By default,  all classes that inherit from `OPNLib.Serialize.Adaptor` will have an associated default map: MAP0, that will make a direct mapping regarding property names (same name for target an source property).
+By default,  all classes that inherit from `OPNLib.Serialize.Adaptor` will have an associated default map: `MAP0`, that will make a direct mapping regarding property names (same name for target an source property).
 
-Each property will be categorized in group types, numbered from 1 to 6. Currently these are the group types supported :
+Each property will be categorized in group types, numbered from `1` to `6`. Currently these are the group types supported :
 
 Code | Category | Description
 ---- | ------------- | -----------
@@ -60,10 +59,10 @@ Code | Category | Description
 6 | List of Objects | A property of type %Collection.ListOfObject
 7 | Stream | Properties of type %Stream.*, %CSP.*stream*,…
 
-During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as a stream in base64).
+During map generation, by default, the `Adaptor` sets export and import conversion methods for dates, datetimes, timestamps and streams (which are exported as a stream in base64).
 
 ---
-** MAPS / MAPSREV globals' structure**
+**MAPS / MAPSREV globals' structure**
 
 ^MAP("*classname*","*mapname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
 
@@ -85,7 +84,7 @@ During map generation, by default, the Adaptor sets export and Import conversion
 
 ### How could we configure our mapping for serialization?
 
-We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply. To do this, we can modify directly in the global, or do it programatically (See `OPNLib.Serialize.Util` class for tools to export/import maps, get / set property mappings,etc…)
+We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default `MAP0` and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply. To do this, we can modify directly in the global, or do it programatically (See `OPNLib.Serialize.Util` class for tools to export/import maps, get / set property mappings,etc…)
 
 ---
 **Example:**
@@ -148,11 +147,11 @@ Anyway, the primary class is not affected and doesn't have to be changed no matt
 Using these classes is very easy. Let's see an example:
 
 ---
-Example :
+**Example:**
 
-We want to be able to export SampleApps.Serialize.PersistObject to JSON, but just some of the properties: `cod`, `description` and `start`. We want to project those properties, for example, in Spanish, as: `codigo`, `descripcion` and `inicio` respectively.
+We want to be able to export `SampleApps.Serialize.PersistObject` to JSON, but just some of the properties: `cod`, `description` and `start`. We want to project those properties, for example, in Spanish, as: `codigo`, `descripcion` and `inicio` respectively.
 
-We design the required map, that we call MAP2 and load it:
+We design the required map, that we call `MAP2` and load it:
 
 ```javascript
 do ##class(SampleApps.Serialize.HandleMaps).SetPersistObjectMAP2()
