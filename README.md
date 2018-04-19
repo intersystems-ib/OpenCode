@@ -24,6 +24,7 @@ _(Example assumes that your classname is `SampleApps.Serialize.MapTesting`, that
 From the terminal,in the name space where your class exists :
 
 ```javascript
+
      Set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
      Set objJSON = obj.Export()
      Do objJSON.%ToJSON()
@@ -62,59 +63,88 @@ Code | Category | Description
 During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as a stream in base64).
 
 ---
-**MAP0 structure**
+** MAPS / MAPSREV globals' structure**
 
-MAP0("*classname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
+^MAP("*classname*","*mapname*",_GroupType[1..6]_,"_Source Property Name_") = *List Element*
+
  *List Element*:
- > Pos 1 *Target Property Name*
- > Pos 2
- > Pos 3
- > Pos 4
+ 
+  [1] *Target Property Name*
+  
+  [2] *Convert Method*
+  
+  [3] *Drill down*
+  
+  [4] *Class of referenced object(s)*
+  
+  [5] *Template Class that implement export/import logic*
+  
+  [6] *Method Class to dispatch for export/import*
 
 ---
 
 ### How could we configure our mapping for serialization?
 
-We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply (***) 
-(***) See OPNLIB.SERIALIZE.ADAPTOR.Serialize.Util library for tools to export/import maps, get / set property mappings,etc…)
+We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply. To do this, we can modify directly in the global, or do it programatically (See `OPNLib.Serialize.Util` class for tools to export/import maps, get / set property mappings,etc…)
 
-We also have the possibility of changing a bit the way in which default map MAP0 is generated :
-	• Change the name of default map. 
-		○ Use parameter EXPTDEFAULTMAP to indicate a name for default map before compiling the class 
-	• Excluding  properties 
-		○ if we don't want to export some   properties, we should include them in the parameter : EXPTEXCLUDEPROP before compiling the class (the properties will be in a comma separated list)
-	• include  object references
-		○ Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter EXPTINCLUDEOREF to 1.
-	• Drill down levels
-		○ To indicate up to what number of levels we want the export mechanism to drill down through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
+---
+**Example:**
 
-Example:
+```javascript
+ set tClassName = "SampleApps.Serialize.MapTesting"
+ ;Assuming the class has only 1 map: MAP0, used in ^MAPS and ^MAPSREV
+ set json = ##class(OPNLib.Serialize.Util).ExportMapsToJSON(tClassName)
+ 
+ ;change name of map from MAP0 to MAP1 
+ set json.maps.%Get(0).map = "MAP1"  //change mapname entry in corresponding to ^MAPS
+ set json.maps.%Get(1).map = "MAP1" //change mapname entry corresponding to ^MAPSREV
 
-<<<create MAP1 from MAP0 >>>
+ ;Overwrite map (2) of SampleApps.Serialize.MapTesting with map in object:json
+ set tSC = ##class(OPNLib.Serialize.Util).ImportMapsFromJSON(json,2,tClassName) 
 
-<<<USING MAP0 and MAP1 from the same object instance >>>
+ ;Get settings of one of the properties. They are returned in a json object
+ set propExprt = ##class(SampleApps.Serialize.MapTesting).GetMappedPropSettings("code","MAP1",tClassName,1)
 
-How did it work the default mechanism?
+ ;We change the targetPropertyName setting
+ set $ListUpdate(propExprt.settings,1) = "codeAccepted"
+ do ##class(SampleApps.Serialize.MapTesting).SetMappedPropSettings("code",propExprt,"MAP1",tClassName,1)
 
-Both methods, export and Import will call the generated methods: exportStd and imoortStd respectively. These two methods will go through the global ^MAPS and ^MAPSREV respectively, looking for the properties to export /import and applying the required conversions. 
-Both methods work over an already instantiated method. This is particularly important for import, as we can have an object in memory with some data already and import the rest of the data from a serialized object. The import mechanism will replace with the new content the properties contained in the serialization but will preserve other properties already set in the instance that are not included in the serialization that we import.
+ ;Now we open and object and export it using new mapping
+ set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
+ set objJSON = obj.Export(,,,,"MAP1")
+ do objJSON.%ToJSON()
 
-Example:
+```
 
-<< import a JSON with just some properties in an object where we already have some others set >>>
+We also have the possibility of changing a bit the way in which default map `MAP0` is generated :
+* Change the name of default map. 
+ * Use parameter `EXPTDEFAULTMAP` to indicate a name for default map before compiling the class 
+* Excluding  properties 
+ * if we don't want to export some   properties, we should include them (comma separated list) in the parameter : `EXPTEXCLUDEPROP` before compiling the class
+* include  object references
+ * Even when we decide not to drill down through referenced objects, we still have the chance to export the object reference itself if we set the parameter `EXPTINCLUDEOREF` to 1.
+* Drill down levels
+ * Use `EXPTDRILLDOWN`To indicate up to what number of levels that the export/import logic should follow through object references. 0 means no drill down. A positive number(n) means to drill down n times through the chain of references.
 
-This way of working give us the flexibility of using different mappings using the same autogenerated code but it can have a penalty in performance if we use it massively in loops or in very high concurrency use cases. Anyway,better test in such scenarios. 
+## How did it work the default mechanism?
 
-Some considerations about performance 
+Both methods, `Export` and `Import` will call the generated methods: `exportStd` and `importStd` respectively. These two methods will go through the global `^MAPS` and `^MAPSREV` respectively, looking for the properties to export /import and applying the required conversions. 
+Both methods work over an already instantiated method. This is particularly interesting for import, as we can have an object in memory with some data already and import the rest of the data from a serialized object. The import mechanism will replace with the new content the properties contained in the serialization but will preserve other properties already set in the instance that are not included in the serialization that we import.
 
-As we already mentioned, the default mechanism resolve the mapping sets at real time, trasversing a global to set the properties to export/import  targets. That means that this mechanism will always be slower than if we already had that settings resolved at compile time. In order to provide that functionality, we can use the Template classes. 
+This way of working give us the flexibility of using different mappings using the same autogenerated code but it can have a penalty in performance if we use it massively in loops or in very high concurrency use cases. Anyway, better test in such scenarios. 
 
- What are the template classes for?
+## Some considerations about performance 
 
-The templates classes allow us to generate the logic to export /import at compile time.
+As it was already mentioned, the default mechanism resolve the mapping sets at real time, trasversing a global to set the properties to export/import targets. That means that this mechanism will always be slower than if we already had that settings resolved at compile time. In order to provide that functionality, we can use the Template classes. 
+
+## What are the template classes for?
+
+The templates classes allow us to generate the logic to export/import at compile time.
 This have benefits over performance but comes at the price of having to use a different class for each type of serialization format and mapping.
 
 Anyway, the primary class is not affected and doesn't have to be changed no matter how many templates define to handle the serialization of its objects.
+
+
 
 Example :
 
