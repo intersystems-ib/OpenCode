@@ -25,11 +25,13 @@ From the terminal,in the name space where your class exists :
 
 ```javascript
      Set obj = ##class(SampleApps.Serialize.MapTesting).%OpenId(1)
-     Set JSON = obj.Export()
-     Do JSON.%ToJSON()
+     Set objJSON = obj.Export()
+     Do objJSON.%ToJSON()
 
      Set newObj = ##class(SampleApps.Serialize.MapTesting).%New()
-     Do newObj.Import(,,JSON)
+     Do newObj.Import(,,objJSON)
+     set tSC = newObj.%Save()
+     write newOBJ.%Id()
  ```
 We will have a new instance of _`SampleApps.Serialize.MapTesting`_ object, a clone of the one with ID=1. This was the example, we can modify it before saving or just discarding.
  ```
@@ -37,32 +39,35 @@ We will have a new instance of _`SampleApps.Serialize.MapTesting`_ object, a clo
  
 ### What _`OPNLib.Serialize.Adaptor`_ provides?
 
-Basically when we compile a class that inherits from our Adaptor, the class will have 4 new generic instance methods: `Export` and `Import` (that will act as dispatchers), and `exportStd` and  `importStd` (that implements the logic to serialize/deserialize in/from JSON format). Also, and very important, it will be created a generic mapping between each of the properties in the Caché object  and its equivalent serialized. That class mapping will be stored in 2 internal globals: `^MAPS` and `^MAPSREV` (**).
-(**) Globals structure explained later on 
+Basically when we compile a class that inherits from our Adaptor, the class will have 4 new generic instance methods: `Export` and `Import` (that will act as dispatchers), and `exportStd` and  `importStd` (that implements the logic to serialize/deserialize in/from JSON format). Also, and very important, it will be created a generic mapping between each of the properties in the Caché object  and its equivalent serialized. That class mapping will be stored in 2 internal globals: `^MAPS` and `^MAPSREV` (Globals structure is explained in more detail in class documentation).
  
-How is the mapping built at first place?
+### How is the mapping built at first place?
 
-We can have several maps for a particular class (for example to exchange data from an object  with different systems or organizations, we might need to export some properties but not others, or apply different conversions to some values, or name the properties differently , etc…).
+We can have several maps for a particular class (for example to exchange data from an object  with different systems or organizations, we might need to export or import some properties but not others, or apply different conversions to some values, or name the properties differently , etc…).
 
-By default, Adaptor will generate MAP0, and will make a direct mapping regarding property names (same name for target an source property).
+By default,  all classes that inherit from `OPNLib.Serialize.Adaptor` will have an associated default map: MAP0, that will make a direct mapping regarding property names (same name for target an source property).
 
-Each property will be categorized in group types. Currently these are the group types supported :
-	1) Basic type 
-		○ It'll include %String, %Integer, %Date, %Datetime,%Timestamp,%Decimal,%Float,… and most of the basic types defined in the %Library package 
-	2) List collection 
-		○ It'll include collections of datatypes of type %Collection.ListOfDT
-	3) Array collection 
-		○ It'll include collections of datatypes of type %Collection.ArrayOfDT
-	4) Object Reference
-		○ A property that reference a custom object not in %* libraries 
-	5) Array of objects and Relationship objects 
-		○ A property of type %Collection.ArrayOfObject or a property of type %RelationshipObject with cardinality many or children
-	6) List of Objects 
-		○ A property of type %Collection.ListOfObject
-	7) Stream
-		○ Properties of type %Stream.*, %CSP.*stream*,…
+Each property will be categorized in group types, numbered from 1 to 6. Currently these are the group types supported :
 
-How could we configure our mapping for serialization?
+	1. Basic type 
+		* It'll include %String, %Integer, %Date, %Datetime,%Timestamp,%Decimal,%Float,… and most of the basic types defined in the %Library package 
+	2. List collection 
+		* It'll include collections of datatypes of type %Collection.ListOfDT
+	3. Array collection 
+		* It'll include collections of datatypes of type %Collection.ArrayOfDT
+	4. Object Reference
+		* A property that reference a custom object not in %* libraries 
+	5. Array of objects and Relationship objects 
+		* A property of type %Collection.ArrayOfObject or a property of type %RelationshipObject with cardinality many or children
+	6. List of Objects 
+		* A property of type %Collection.ListOfObject
+	7. Stream
+		* Properties of type %Stream.*, %CSP.*stream*,…
+
+During map generation, by default, the Adaptor sets export and Import conversion methods for dates and streams (which are exported as base64 text)
+ 
+
+### How could we configure our mapping for serialization?
 
 We can have as much mapping definitions for a class as we need. An easy way to start to define our customized maps is exporting the default MAP0 and importing it again with a different name, then we can make changes in the map regarding the properties that should be exported /imported, names, conversor methods to apply (***) 
 (***) See OPNLIB.SERIALIZE.ADAPTOR.Serialize.Util library for tools to export/import maps, get / set property mappings,etc…)
