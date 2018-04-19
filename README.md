@@ -3,7 +3,7 @@
 
 This project is just an attempt to implement a feature to serialize objects (persistent or just registered) with **two main goals in mind** :
 
-1. Avoid the need of changing the class definition if there are changes in naming of serialized properties or even in the criteria to serialize the object
+1. Avoid the need of changing the class definition if there are changes in the names of serialized properties or even in the criteria to serialize the object
 2. Being able to serialize/deserialize to/from  multiple formats (JSON, CSV, XML, custom,…), also _without touching the class definition itself_.
 
 ### How to get universal serialization feature in your classes
@@ -115,6 +115,7 @@ We can have as much mapping definitions for a class as we need. An easy way to s
  do objJSON.%ToJSON()
 
 ```
+---
 
 We also have the possibility of changing a bit the way in which default map `MAP0` is generated :
 * Change the name of default map. 
@@ -144,9 +145,64 @@ This have benefits over performance but comes at the price of having to use a di
 
 Anyway, the primary class is not affected and doesn't have to be changed no matter how many templates define to handle the serialization of its objects.
 
+Using these classes is very easy. Let's see an example:
 
-
+---
 Example :
 
-<<< define and use different template classes, for different maps in JSON and also for different serialization (CSV)
->>> 
+We want to be able to export SampleApps.Serialize.PersistObject to JSON, but just some of the properties: `cod`, `description` and `start`. We want to project those properties, for example, in Spanish, as: `codigo`, `descripcion` and `inicio` respectively.
+
+We design the required map, that we call MAP2 and load it:
+
+```javascript
+do ##class(SampleApps.Serialize.HandleMaps).SetPersistObjectMAP2()
+```
+
+Then, we create a new class that we can call `SampleApps.Serialize.PersistObject.generatedMAP2` that extends `OPNLib.Serialize.Template` and change the required parameters. This would be the class definition:
+```javascript
+Class SampleApps.Serialize.PersistObject.generatedMAP2 Extends OPNLib.Serialize.Template
+{
+Parameter EXPTASSOCIATEDCLASS = "SampleApps.Serialize.PersistObject";
+Parameter EXPTMAP = "MAP2";
+}
+```
+We have just set the associated class and the MAP to apply. Then, we will have 2 methods auto-generated: `Export` and `Import` with the code required to export/import from/to JSON format objects of type `PersistObject` following the `MAP2` designed.
+The disadvantage with this approach is that we will have to recompile each time the mapping changes. The advantage is that it will be a bit quicker than the standard approach as all the property sets are static as have been resolved at compile time.
+
+As you can see, the class that stores the `PersistObject` objects, is not aware of these export/import classes and methods and it doesn't require any modification.
+
+This way, once our template class is compiled, we could do:
+
+```javascript
+ set mObject = ##class(SampleApps.Serialize.PersistObject).%OpenId(1)
+ set json = mObject.Export("SampleApps.Serialize.PersistObject.generatedMAP1","Export")
+ do json.%ToJSON()
+ {
+  "codigo":372732612,
+  "descripcion":"Q8845",
+  "inicio":"1953-03-04",
+  "añofinal":133788319,
+  "colores":"B9211\tC8958\tY489\tC5123",
+  "MapTesting":
+          {
+           "codigo":462711925,
+           "fecha":"1932-03-30",
+           "descripcion":"F1357",
+           "numeroDecimal":5303.31,
+           "fechaHora":"1956-07-25 04:52:33",
+           "hora":"17:47:32",
+           "lista":"J9796\tZ2412\tN4278"
+          }
+ }
+```
+---
+
+## Sample Application
+There are some classes that I used to build some of the examples. There are others testing other features. You can take a look at them in the package `SampleApps.Serialize`
+
+## End
+
+I hope this code can help you in any way.
+
+Enjoy!
+_Jose-Tomas Salvador_
