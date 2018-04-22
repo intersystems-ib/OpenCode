@@ -29,7 +29,7 @@ From the terminal,in the name space where your class exists :
      Do objJSON.%ToJSON()
 
      Set newObj = ##class(SampleApps.Serialize.MapTesting).%New()
-     Do newObj.Import(,,objJSON)
+     Do newObj.Import(objJSON)
      set tSC = newObj.%Save()
      write newOBJ.%Id()
  ```
@@ -212,6 +212,52 @@ This way, once our template class is compiled, we could do:
 
 ## Sample Application
 There are some classes that I used to build some of the examples. There are others testing other features. You can take a look at them in the package `SampleApps.Serialize`
+
+## REST Services
+Just a bunch of REST services to make use and test this functionality. You can find them in `SampleApps.Serialize.REST`class:
+
+Service | Path | HTTP Method 
+------- | ---- | -----------
+Get object in JSON format | /object/json/:class/:id/:ddlevel/:map | GET
+                          | /object/json/:class/:id/:ddlevel | GET
+                          | /object/json/:class/:id" | GET
+Load object from JSON | /object/json/:class/:ddlevel/:map | POST
+                      | /object/json/:class/:ddlevel | POST
+                      | /object/json/:class | POST
+ (assuming there is a property _classname_ in input JSON) | /object/json | POST
+Update an object from JSON input | /object/json/:class/:id | PUT
+Delete an object with certain ID | NOT YET IMPLEMENTED | DELETE
+Get serialized object in format especified by serialization method | /object/serial/:templateclass/:serializationmethod/:class/:id/:ddlevel | GET
+                                                                   | /object/serial/:templateclass/:serializationmethod/:class/:id |GET
+Load object from serialized stream | /object/serial/:templateclass/:serializationmethod/:class/:ddlevel | POST 
+                                   | /object/serial/:templateclass/:serializationmethod/:class | POST
+
+<!-- Update object -->
+<!-- NOT YET IMPLEMENTED
+<Route Url="/object/serial/:templateclass/:serializationmethod/:class/:id" Method="PUT" Call="UpdateSerial" />
+-->
+
+<!-- Get a JSON document that contains export/import MAPs associated to a particular :class -->
+<Route Url="/map/:class/:map/:type" Method="GET" Call="GetStdMap"/>
+<Route Url="/map/:class/:map" Method="GET" Call="GetStdMap"/>
+<Route Url="/map/:class" Method="GET" Call="GetStdMap"/>
+
+<!-- Set export/import MAPs from a JSON document -->
+<Route Url="/map/:override/:filter" Method="POST" Call="LoadStdMap"/>
+<Route Url="/map" Method="POST" Call="LoadStdMap"/>
+<Route Url="/map/chgclass/:targetclass/:override/:filter" Method="POST" Call="LoadStdMapToOther"/>
+<Route Url="/map/chgclass/:targetclass" Method="POST" Call="LoadStdMapToOther"/>
+
+<!-- Test methods - GET -->
+<Route Url="/request" Method="GET" Call="Request"/>
+
+<!-- Test methods - POST -->
+<Route Url="/echo" Method="POST" Call="Echo"/>
+<Route Url="/echojson" Method="POST" Call="EchoJSON"/>
+<Route Url="/echo/:txt" Method="POST" Call="Echo"/>
+</Routes>
+
+
 
 ## End
 
