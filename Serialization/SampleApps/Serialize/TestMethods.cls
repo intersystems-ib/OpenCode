@@ -9,7 +9,7 @@ ClassMethod Test(pId as %Integer=50)
 	set tObj = m.Export(,,,,1)
 
 	set m2 = ##class(SampleApps.Serialize.MapTesting).%New()
-	do m2.Import(,,tObj,1)	
+	do m2.Import(tObj,1)	
 	set tSC = m2.%Save()
 	
 	write !,"Saving MapTesting ID: "_m2.%Id()

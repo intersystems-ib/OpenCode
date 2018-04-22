@@ -29,20 +29,20 @@ Method Export(pMapTemplatesClass As %String = "", pMethodMap As %String = "", pI
 
 	return $$$NULLOREF
 }
-/// It imports the data from pInObject to the instance that is calling the method
-/// pInObject will be an object (%DynamicObject, %XML,...) with data to load to current object through the mechanism established by pMethodMap implemented in pMapTemplatesClass
-/// pMethodMap - Method chosen to import data. That method implements the logic to import data in this type of objects. Depending on the logic that data could come in different formats. 
-///              By default, if no pMethodMap is indicated, it will use <b>importStd</b> that expects the import data in JSON format
-/// pMapTemplatesClass - Class in which it is the pMethodMap. 
-///						 This class could contain other methods to import/export data from this type of objects using different mechanisms and/or formats.
-///						 By default, if no pMapTemplatesClass is indicated, and no pMethodMap, it'll be used <b>importStd</b>
-/// pDrillDown - Indicates the levels to follow the chain of references if the object include references to other objects, arrays/list of objects or relationships. 
+/// It imports the data from <var>pInObject</var> to the instance that is calling the method
+/// <var>pInObject</var> will be an object (%DynamicObject, %XML,...) with data to load to current object through the mechanism established by pMethodMap implemented in pMapTemplatesClass
+/// <var>pDrillDown</var> - Indicates the levels to follow the chain of references if the object include references to other objects, arrays/list of objects or relationships. 
 ///				 -1 (default): Apply DrillDown defined in the MAP for each property
 ///				  0 : No drill down (but include OREF if EXPTINCLUDEORED=1 in the object class definition)
-/// pArgs       - Included for flexibility.  
+/// <var>pMapTemplatesClass</var> - Class in which it is the pMethodMap. 
+///						 This class could contain other methods to import/export data from this type of objects using different mechanisms and/or formats.
+///						 By default, if no pMapTemplatesClass is indicated, and no pMethodMap, it'll be used <b>importStd</b>
+/// <var>pMethodMap</var> - Method chosen to import data. That method implements the logic to import data in this type of objects. Depending on the logic that data could come in different formats. 
+///              By default, if no pMethodMap is indicated, it will use <b>importStd</b> that expects the import data in JSON format
+/// <var>pArgs</var>       - Included for flexibility.  
 ///				- pArg(1) : <MAP to use> Used for export/import default mechanism. Includes the MAP name to use to export/import. 
 ///				            If pArg(1) is null, it'll be used the default MAP (as defined in EXPTDEFAULTMAP parameter of object class definition)
-Method Import(pMapTemplatesClass As %String = "", pMethodMap As %String = "", pInObject As %RegisteredObject = "",pDrillDown as %Integer=-1,ByRef pArgs...) As %Status
+Method Import(pInObject As %RegisteredObject = "", pDrillDown as %Integer=-1, pMapTemplatesClass As %String = "", pMethodMap As %String = "", ByRef pArgs...) As %Status
 {
 	#dim tSC as %Status=0
 	#dim e as %Exception.General

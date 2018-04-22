@@ -165,7 +165,7 @@ ClassMethod IngestJSON(pClass as %String="",pDrillDownLevel as %Integer=-1,pMAP 
     if (pClass'="")&&(tJSON.%Size()'=0)&&(##class(%Dictionary.CompiledClass).%OpenId(pClass).Super["OPNLib.Serialize.Adaptor")
     {
     	set tObjRef = $classmethod(pClass,"%New")
-    	set:$IsObject(tObjRef) tSC = tObjRef.Import(,,tJSON,pDrillDownLevel,pMAP)
+    	set:$IsObject(tObjRef) tSC = tObjRef.Import(tJSON,pDrillDownLevel,,,pMAP)
     	set tSC = tObjRef.%Save()
     	set tNewID = tObjRef.%Id()
     	write "{""newID"":"_tNewID_",""status"":"""_tSC_"""}"
@@ -192,7 +192,7 @@ ClassMethod UpdateJSON(pClass as %String="", pId as %String="") as %Status
     if (pClass'="")&&(pId'="")&&(tJSON.%Size()'=0)&&(##class(%Dictionary.CompiledClass).%OpenId(pClass).Super["OPNLib.Serialize.Adaptor")
     {
     	set tObjRef = $classmethod(pClass,"%OpenId",pId)
-    	set:$IsObject(tObjRef) tSC = tObjRef.Import(,,tJSON,0)
+    	set:$IsObject(tObjRef) tSC = tObjRef.Import(tJSON,0)
     	set tSC = tObjRef.%Save()
     	write "{""ID"":"_pId_",""status"":"""_tSC_"""}"
     }
@@ -225,7 +225,7 @@ ClassMethod IngestSerialization(pTemplateClass as %String="",pImportMethod as %S
     	set tObjRef = $classmethod(pClass,"%New")
     	if $IsObject(tObjRef)
     	{
-    		set tSC = tObjRef.Import(pTemplateClass,pImportMethod,%request.Content,pDrillDownLevel)
+    		set tSC = tObjRef.Import(%request.Content,pDrillDownLevel,pTemplateClass,pImportMethod)
     		set:(tSC=1) tSC = tObjRef.%Save()
     		set tNewID = tObjRef.%Id()
     		write "{""newID"":"_tNewID_",""status"":"""_tSC_"""}"
