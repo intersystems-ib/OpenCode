@@ -170,7 +170,7 @@ We design the required map, that we call `MAP2` and load it:
 ```javascript
 do ##class(SampleApps.Serialize.HandleMaps).SetPersistObjectMAP2()
 ```
-
+Loa
 Then, we create a new class that we can call `SampleApps.Serialize.PersistObject.generatedMAP2` that extends `OPNLib.Serialize.Template` and change the required parameters. This would be the class definition:
 ```javascript
 Class SampleApps.Serialize.PersistObject.generatedMAP2 Extends OPNLib.Serialize.Template
@@ -223,42 +223,24 @@ Get an object up to a drilldown level in JSON format following the default map |
 Get an object in JSON format following the default map and default drilldown especs | /object/json/:class/:id" | GET
 Load an object from JSON using a particular map and drilldown especifications | /object/json/:class/:ddlevel/:map | POST
 Load an object from JSON using its default map and a particular drilldown especifications | /object/json/:class/:ddlevel | POST
- | /object/json/:class | POST
- (assuming there is a property _classname_ in input JSON) | /object/json | POST
+Load an object from JSON using its default map | /object/json/:class | POST
+Load an object from JSON using its default map and which class is included in _classname_ property of the JSON document | /object/json | POST
+Get a serialized object in format especified by serialization method and with a especified drilldown level | /object/serial/:templateclass/:serializationmethod/:class/:id/:ddlevel | GET
+Get a serialized object in format especified by serialization method | /object/serial/:templateclass/:serializationmethod/:class/:id |GET
+Load object from a particular class, and with an especified drilldown level, from a serialized stream | /object/serial/:templateclass/:serializationmethod/:class/:ddlevel | POST 
+Load object from a particular class from a serialized stream | /object/serial/:templateclass/:serializationmethod/:class | POST
 Update an object from JSON input | /object/json/:class/:id | PUT
 Delete an object with certain ID | NOT YET IMPLEMENTED | DELETE
-Get serialized object in format especified by serialization method | /object/serial/:templateclass/:serializationmethod/:class/:id/:ddlevel | GET
- | /object/serial/:templateclass/:serializationmethod/:class/:id |GET
-Load object from serialized stream | /object/serial/:templateclass/:serializationmethod/:class/:ddlevel | POST 
- | /object/serial/:templateclass/:serializationmethod/:class | POST
-
-
-
-<!-- Update object -->
-<!-- NOT YET IMPLEMENTED
-<Route Url="/object/serial/:templateclass/:serializationmethod/:class/:id" Method="PUT" Call="UpdateSerial" />
--->
-
-<!-- Get a JSON document that contains export/import MAPs associated to a particular :class -->
-<Route Url="/map/:class/:map/:type" Method="GET" Call="GetStdMap"/>
-<Route Url="/map/:class/:map" Method="GET" Call="GetStdMap"/>
-<Route Url="/map/:class" Method="GET" Call="GetStdMap"/>
+Update an object from serialized input | (NOT YET IMPLEMENTED) /object/serial/:templateclass/:serializationmethod/:class/:id | PUT
+Get a JSON document that contains certain type of MAPS (export or import) for a particular class | /map/:class/:map/:type | GET
+Get a JSON document that contains export and import definition of a MAP name associated with a particular class | /map/:class/:map | GET
+Get a JSON document that contains all the maps' definitions for a class | /map/:class | GET
 
 <!-- Set export/import MAPs from a JSON document -->
-<Route Url="/map/:override/:filter" Method="POST" Call="LoadStdMap"/>
-<Route Url="/map" Method="POST" Call="LoadStdMap"/>
-<Route Url="/map/chgclass/:targetclass/:override/:filter" Method="POST" Call="LoadStdMapToOther"/>
-<Route Url="/map/chgclass/:targetclass" Method="POST" Call="LoadStdMapToOther"/>
-
-<!-- Test methods - GET -->
-<Route Url="/request" Method="GET" Call="Request"/>
-
-<!-- Test methods - POST -->
-<Route Url="/echo" Method="POST" Call="Echo"/>
-<Route Url="/echojson" Method="POST" Call="EchoJSON"/>
-<Route Url="/echo/:txt" Method="POST" Call="Echo"/>
-</Routes>
-
+Set export/import MAPS (all or those comma-separated especified in Filter) from a JSON document | /map/:override/:filter | POST
+Set export/import MAPS from a JSON document (overriding the existing ones if any) | /map" | POST
+Set the export/import MAPS from a JSON document to a different target class (all or those especificied in filter) | /map/chgclass/:targetclass/:override/:filter | POST
+Set the export/import MAPS from a JSON document to a different target class | /map/chgclass/:targetclass | POST
 
 
 ## End
