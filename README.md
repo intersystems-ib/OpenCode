@@ -1,3 +1,4 @@
+
 # OpenCode
 ## Serialization Project
 
@@ -5,6 +6,10 @@ This project is just an attempt to implement a feature to serialize objects (per
 
 1. Avoid the need of changing the class definition if there are changes in the names of serialized properties or even in the criteria to serialize the object
 2. Being able to serialize/deserialize to/from  multiple formats (JSON, CSV, XML, custom,…), also _without touching the class definition itself_.
+
+
+> **WARNING**: This code it's not supported in any way. It's been developed as a proof of concept for myself and because there is no JSON.Adaptor yet (coming soon!). Be careful and count on that can (likely will) fail if you even consider using it in some kind of production environments. Use it, play with it, change it or improve it at your own discretion.
+This said and understood, you can follow on... ;-)
 
 ### How to get universal serialization feature in your classes
 
