@@ -218,19 +218,21 @@ Just a bunch of REST services to make use and test this functionality. You can f
 
 Service | Path | HTTP Method 
 ------- | ---- | -----------
-Get object in JSON format | /object/json/:class/:id/:ddlevel/:map | GET
-                          | /object/json/:class/:id/:ddlevel | GET
-                          | /object/json/:class/:id" | GET
-Load object from JSON | /object/json/:class/:ddlevel/:map | POST
-                      | /object/json/:class/:ddlevel | POST
-                      | /object/json/:class | POST
+Get an object up to a drilldown level in JSON format following a particular map especification | /object/json/:class/:id/:ddlevel/:map | GET
+Get an object up to a drilldown level in JSON format following the default map | /object/json/:class/:id/:ddlevel | GET
+Get an object in JSON format following the default map and default drilldown especs | /object/json/:class/:id" | GET
+Load an object from JSON using a particular map and drilldown especifications | /object/json/:class/:ddlevel/:map | POST
+Load an object from JSON using its default map and a particular drilldown especifications | /object/json/:class/:ddlevel | POST
+ | /object/json/:class | POST
  (assuming there is a property _classname_ in input JSON) | /object/json | POST
 Update an object from JSON input | /object/json/:class/:id | PUT
 Delete an object with certain ID | NOT YET IMPLEMENTED | DELETE
 Get serialized object in format especified by serialization method | /object/serial/:templateclass/:serializationmethod/:class/:id/:ddlevel | GET
-                                                                   | /object/serial/:templateclass/:serializationmethod/:class/:id |GET
+ | /object/serial/:templateclass/:serializationmethod/:class/:id |GET
 Load object from serialized stream | /object/serial/:templateclass/:serializationmethod/:class/:ddlevel | POST 
-                                   | /object/serial/:templateclass/:serializationmethod/:class | POST
+ | /object/serial/:templateclass/:serializationmethod/:class | POST
+
+
 
 <!-- Update object -->
 <!-- NOT YET IMPLEMENTED
