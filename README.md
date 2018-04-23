@@ -235,8 +235,6 @@ Update an object from serialized input | (NOT YET IMPLEMENTED) /object/serial/:t
 Get a JSON document that contains certain type of MAPS (export or import) for a particular class | /map/:class/:map/:type | GET
 Get a JSON document that contains export and import definition of a MAP name associated with a particular class | /map/:class/:map | GET
 Get a JSON document that contains all the maps' definitions for a class | /map/:class | GET
-
-<!-- Set export/import MAPs from a JSON document -->
 Set export/import MAPS (all or those comma-separated especified in Filter) from a JSON document | /map/:override/:filter | POST
 Set export/import MAPS from a JSON document (overriding the existing ones if any) | /map" | POST
 Set the export/import MAPS from a JSON document to a different target class (all or those especificied in filter) | /map/chgclass/:targetclass/:override/:filter | POST
