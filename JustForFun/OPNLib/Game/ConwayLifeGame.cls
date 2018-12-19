@@ -469,11 +469,18 @@ Method DisplayRange(pFrom As %Integer = 0, pTo As %Integer = 0, pFromVector As %
 	quit $$$OK
 }
 
+/// pTest is a JSON object with params and config to run the test. It assumes that the workd (ID) has been created beforehand
+///  {"ID":1,  //object ID
+///   "From":0,"To":200, //Range of iterations to display
+///   "Iterations":200,  //Number of times that we have to iterate from the current state on
+///   "InitialConfig":5,  // Patterns to define before "big-bang"   (see Initialize())
+///   "Rows":80,"Columns":150,  // Size of our universe in Rows and Columns
+///   "Vector0":"1,1","VectorN":"120,47"  // Vector (Column,Row) that define the area to display in our terminal
 ClassMethod Test(pTest As %DynamicObject = "")
 {
 	if '($IsObject(pTest)&&(pTest.%Classname="%DynamicObject")) 
 	{
-		set pTest = {"ID":1,"From":0,"To":200,"Iterations":200,"InitialConfig":5,"Rows":100,"Columns":200,"Vector0":"10,10","VectorN":"100,50"}
+		set pTest = {"ID":1,"From":0,"To":200,"Iterations":200,"InitialConfig":5,"Rows":80,"Columns":150,"Vector0":"1,1","VectorN":"120,47"}
 	}
 	
 	
