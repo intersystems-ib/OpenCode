@@ -476,27 +476,39 @@ Method DisplayRange(pFrom As %Integer = 0, pTo As %Integer = 0, pFromVector As %
 ///   "InitialConfig":5,  // Patterns to define before "big-bang"   (see Initialize())
 ///   "Rows":80,"Columns":150,  // Size of our universe in Rows and Columns
 ///   "Vector0":"1,1","VectorN":"120,47"  // Vector (Column,Row) that define the area to display in our terminal
-ClassMethod Test(pTest As %DynamicObject = "")
+ClassMethod Test(pTest As %DynamicObject = "") as %Status
 {
-	if '($IsObject(pTest)&&(pTest.%Classname="%DynamicObject")) 
+	#dim e as %Exception.General
+	#dim tSC as %Status = $$$OK
+	
+	try
 	{
-		set pTest = {"ID":1,"From":0,"To":200,"Iterations":200,"InitialConfig":5,"Rows":80,"Columns":150,"Vector0":"1,1","VectorN":"120,47"}
+		if '($IsObject(pTest)&&(pTest.%ClassName()="%DynamicObject")) 
+		{
+			set pTest = {"ID":1,"From":0,"To":200,"Iterations":200,"InitialConfig":5,"Rows":80,"Columns":150,"Vector0":"1,1","VectorN":"100,40"}
+		}
+		
+		write !,"These are the settings for the test:",!
+		do pTest.%ToJSON()
+		read !,"Press any key to continue... (Ctrl-C to stop)",x
+		
+		set g = ##class(OPNLib.Game.ConwayLifeGame).%OpenId(pTest.ID)
+		
+		$$$TOE(tSC,$IsObject(g))
+		
+		set g.Rows = pTest.Rows
+		set g.Columns = pTest.Columns
+		
+		do g.Initialize(pTest.InitialConfig)
+		do g.Iterate(pTest.Iterations)
+				
+		do g.DisplayRange(pTest.From,pTest.To,pTest.Vector0,pTest.VectorN)
 	}
-	
-	
-	set g = ##class(OPNLib.Game.ConwayLifeGame).%OpenId(pTest.ID)
-	
-	if '$IsObject(g) quit
-	
-	set g.Rows = pTest.Rows
-	set g.Columns = pTest.Columns
-	
-	do g.Initialize(pTest.InitialConfig)
-	do g.Iterate(pTest.Iterations)
-	
-	do g.DisplayRange(pTest.From,pTest.To,pTest.Vector0,pTest.VectorN)
-	
-	quit
+	catch e
+	{
+		return e.AsStatus()
+	}
+	return tSC
 }
 
 Storage Default
