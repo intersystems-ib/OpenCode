@@ -57,17 +57,20 @@ Method Initialize(pConfiguration As %Integer = 0, pIniRow As %Integer = 3, pIniC
 	if pConfiguration = 1 // 
 	{
 		do ..EmptyBoard()
-		do ..Oscillator(pIniRow,pIniCol)		
+		do ..Oscillator(1,pIniRow,pIniCol)  //bar
+		do ..Oscillator(2,pIniRow+5,pIniCol+5)  //toad		
 	}
 	elseif pConfiguration = 2
 	{
 		do ..EmptyBoard()
-		do ..StillLife(pIniRow,pIniCol)
+		do ..StillLife(1,pIniRow,pIniCol)
+		do ..StillLife(2,pIniRow+5,pIniCol+5)
 	}
 	elseif pConfiguration = 3
 	{
 		do ..EmptyBoard()
-		do ..Glider(pIniRow,pColRow)
+		do ..Glider(1,pIniRow,pColRow)
+		do ..Glider(2,pIniRow+5,pColRow+5)
 	}
 	elseif pConfiguration = 4
 	{
