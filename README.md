@@ -192,8 +192,10 @@ As you can see, the class that stores the `PersistObject` objects, is not aware 
 This way, once our template class is compiled, we could do:
 
 ```javascript
+ set cMAP1 = "SampleApps.Serialize.PersistObject.generatedMAP1"
+ //...
  set mObject = ##class(SampleApps.Serialize.PersistObject).%OpenId(1)
- set json = mObject.Export("SampleApps.Serialize.PersistObject.generatedMAP1","Export")
+ set json = mObject.Export(cMAP,"Export")
  do json.%ToJSON()
  {
   "codigo":372732612,
